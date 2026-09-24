@@ -1,0 +1,14 @@
+
+
+Command:1
+cloudflared.exe tunnel route dns arkheion arkheion.in
+
+Command:2
+cloudflared.exe tunnel route dns arkheion www.arkheion.in
+
+cd C:\Cloudflare
+
+cloudflared.exe tunnel run arkheion
+
+
+python app.py

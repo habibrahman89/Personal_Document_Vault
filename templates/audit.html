@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Audit Log</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            background: #f5f7fb;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .stat-tile {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, .06);
+            height: 100%;
+        }
+
+        .stat-tile h6 {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            margin-bottom: 8px;
+        }
+
+        .stat-tile .stat-value {
+            font-size: 30px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+
+        .panel-card {
+            background: #fff;
+            border-radius: 18px;
+            border: none;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, .06);
+        }
+
+        .panel-card table {
+            margin-bottom: 0;
+        }
+
+        .panel-card thead th {
+            background: #f8fafc;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .02em;
+        }
+
+        .empty-row td {
+            text-align: center;
+            color: #9ca3af;
+            padding: 40px 0;
+        }
+
+        .doc-name-cell {
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container mt-4">
+
+        <div class="page-header">
+
+            <div>
+                <h1>
+                    <i class="bi bi-activity"></i>
+                    Audit Log
+                </h1>
+                <p>Your personal account activity history</p>
+            </div>
+
+            <a href="/dashboard" class="btn btn-outline-secondary rounded-pill">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+
+        </div>
+
+        <!-- Statistics -->
+
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-3">
+                <div class="stat-tile">
+                    <h6>Total Logs</h6>
+                    <p class="stat-value">{{ logs|length }}</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stat-tile">
+                    <h6>Login</h6>
+                    <p class="stat-value">{{ login_count }}</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stat-tile">
+                    <h6>Downloads</h6>
+                    <p class="stat-value">{{ download_count }}</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stat-tile">
+                    <h6>Views</h6>
+                    <p class="stat-value">{{ view_count }}</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Table -->
+
+        <div class="card panel-card">
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Action</th>
+                                <th>Document</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for log in logs %}
+
+                            <tr>
+
+                                <td>
+                                    {{ log.id }}
+                                </td>
+
+                                <td>
+                                    {{ (log.created_on + ist_offset).strftime('%d-%b-%Y') }}
+                                </td>
+
+                                <td>
+                                    {{ (log.created_on + ist_offset).strftime('%I:%M:%S %p') }}
+                                </td>
+
+                                <td>
+
+                                    {% if log.action=="LOGIN" %}
+                                    <span class="badge bg-success">
+                                        LOGIN
+                                    </span>
+
+                                    {% elif log.action=="LOGOUT" %}
+                                    <span class="badge bg-secondary">
+                                        LOGOUT
+                                    </span>
+
+                                    {% elif log.action=="UPLOAD" %}
+                                    <span class="badge bg-primary">
+                                        UPLOAD
+                                    </span>
+
+                                    {% elif log.action=="DOWNLOAD" %}
+                                    <span class="badge bg-warning text-dark">
+                                        DOWNLOAD
+                                    </span>
+
+                                    {% elif log.action=="VIEW" %}
+                                    <span class="badge bg-info text-dark">
+                                        VIEW
+                                    </span>
+
+                                    {% elif log.action=="DELETE" %}
+                                    <span class="badge bg-danger">
+                                        DELETE
+                                    </span>
+
+                                    {% else %}
+                                    <span class="badge bg-dark">
+                                        {{ log.action }}
+                                    </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="doc-name-cell" title="{{ log.document_name or '' }}">
+                                    {% if log.document_name %}
+                                    {{ log.document_name }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </td>
+
+                            </tr>
+
+                            {% else %}
+
+                            <tr class="empty-row">
+                                <td colspan="5">No activity recorded yet.</td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="mb-5"></div>
+
+    </div>
+
+</body>
+
+</html>

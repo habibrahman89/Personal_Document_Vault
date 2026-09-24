@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Admin Panel</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            background: #f5f7fb;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .admin-header h1 {
+            font-weight: 700;
+            font-size: 30px;
+            margin-bottom: 4px;
+        }
+
+        .admin-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .btn-action {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .btn-action:hover {
+            background: #eef4ff;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .btn-action-danger:hover {
+            background: #fdecea;
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+
+        .stat-tile {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, .06);
+            height: 100%;
+        }
+
+        .stat-tile h6 {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            margin-bottom: 8px;
+        }
+
+        .stat-tile .stat-value {
+            font-size: 30px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .panel-card {
+            background: #fff;
+            border-radius: 18px;
+            border: none;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, .06);
+        }
+
+        .panel-card table {
+            margin-bottom: 0;
+        }
+
+        .panel-card thead th {
+            background: #f8fafc;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .02em;
+        }
+
+        .empty-row td {
+            text-align: center;
+            color: #9ca3af;
+            padding: 30px 0;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container mt-4">
+
+        <div class="admin-header">
+
+            <div>
+                <h1>Admin Dashboard</h1>
+                <p>System overview, monitoring and management tools</p>
+            </div>
+
+            <a href="/dashboard" class="btn btn-outline-primary rounded-pill">
+                <i class="bi bi-arrow-left"></i>
+                Back to Dashboard
+            </a>
+
+        </div>
+
+        <div class="action-bar">
+
+            <a href="/admin/audit" class="btn btn-action">
+                <i class="bi bi-activity"></i>
+                Audit Viewer
+            </a>
+
+            <a href="/admin/backups" class="btn btn-action">
+                <i class="bi bi-database"></i>
+                Backup Manager
+            </a>
+
+            <a href="/admin/security" class="btn btn-action btn-action-danger">
+                <i class="bi bi-shield-exclamation"></i>
+                Security Monitor
+            </a>
+
+            <a href="/admin/users" class="btn btn-action">
+                <i class="bi bi-people"></i>
+                User Management
+            </a>
+
+            <a href="/admin/login-history" class="btn btn-action">
+                <i class="bi bi-clock-history"></i>
+                Login History
+            </a>
+
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+
+            <div class="col">
+                <div class="stat-tile">
+                    <h6>Users</h6>
+                    <p class="stat-value">{{ total_users }}</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="stat-tile">
+                    <h6>Documents</h6>
+                    <p class="stat-value">{{ total_documents }}</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="stat-tile">
+                    <h6>Deleted Documents</h6>
+                    <p class="stat-value">{{ deleted_documents }}</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="stat-tile">
+                    <h6>Audit Logs</h6>
+                    <p class="stat-value">{{ total_logs }}</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="stat-tile">
+                    <h6>Security Logs</h6>
+                    <p class="stat-value">{{ total_security_logs }}</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="stat-tile">
+                    <h6>Active Sessions</h6>
+                    <p class="stat-value">{{ active_sessions }}</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="stat-tile">
+                    <h6>Locked Users</h6>
+                    <p class="stat-value">{{ locked_users }}</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="stat-tile">
+                    <h6>Today's Logins</h6>
+                    <p class="stat-value">{{ today_logins }}</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="stat-tile">
+                    <h6>Disabled Users</h6>
+                    <p class="stat-value">{{ inactive_users }}</p>
+                </div>
+            </div>
+
+        </div>
+
+        <h3 class="section-title mt-5">
+            Recently Uploaded Documents
+        </h3>
+
+        <div class="card panel-card">
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Filename</th>
+                                <th>Category</th>
+                                <th>Owner (User ID)</th>
+                                <th>Uploaded</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for doc in documents %}
+
+                            <tr>
+
+                                <td>{{ doc.id }}</td>
+
+                                <td>{{ doc.filename.replace(".enc", "") }}</td>
+
+                                <td>{{ doc.category }}</td>
+
+                                <td>{{ doc.user_id }}</td>
+
+                                <td>
+                                    {% if doc.upload_date %}
+                                    {{ doc.upload_date.strftime('%d %b %Y, %I:%M %p') }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if doc.is_deleted %}
+                                    <span class="badge bg-secondary">Deleted</span>
+                                    {% elif doc.google_file_id %}
+                                    <span class="badge bg-success">Available</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Missing</span>
+                                    {% endif %}
+                                </td>
+
+                            </tr>
+
+                            {% else %}
+
+                            <tr class="empty-row">
+                                <td colspan="6">No documents uploaded yet.</td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <h3 class="section-title mt-5">
+            Recent Audit Logs
+        </h3>
+
+        <div class="card panel-card">
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Document</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for log in logs %}
+
+                            <tr>
+
+                                <td>{{ log.id }}</td>
+
+                                <td>{{ log.username }}</td>
+
+                                <td>
+
+                                    {% if log.action=="LOGIN" %}
+                                    <span class="badge bg-success">
+                                        LOGIN
+                                    </span>
+
+                                    {% elif log.action=="VIEW" %}
+                                    <span class="badge bg-warning text-dark">
+                                        VIEW
+                                    </span>
+
+                                    {% elif log.action=="DOWNLOAD" %}
+                                    <span class="badge bg-primary">
+                                        DOWNLOAD
+                                    </span>
+
+                                    {% elif log.action=="DELETE" %}
+                                    <span class="badge bg-danger">
+                                        DELETE
+                                    </span>
+
+                                    {% elif log.action=="LOGOUT" %}
+                                    <span class="badge bg-secondary">
+                                        LOGOUT
+                                    </span>
+
+                                    {% elif log.action=="RESTORE" %}
+                                    <span class="badge bg-warning text-dark">
+                                        RESTORE
+                                    </span>
+
+                                    {% elif log.action=="BACKUP" %}
+                                    <span class="badge bg-info text-dark">
+                                        BACKUP
+                                    </span>
+
+                                    {% else %}
+                                    <span class="badge bg-dark">
+                                        {{ log.action }}
+                                    </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>{{ log.document_name or "-" }}</td>
+
+                                <td>
+                                    {% if log.timestamp %}
+                                    {{ log.timestamp.strftime('%d %b %Y, %I:%M %p') }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </td>
+
+                            </tr>
+
+                            {% else %}
+
+                            <tr class="empty-row">
+                                <td colspan="5">No audit logs recorded yet.</td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="mb-5"></div>
+
+    </div>
+
+</body>
+
+</html>

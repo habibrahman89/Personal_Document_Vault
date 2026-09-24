@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Login History</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            background: #f5f7fb;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .panel-card {
+            background: #fff;
+            border-radius: 18px;
+            border: none;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, .06);
+        }
+
+        .panel-card table {
+            margin-bottom: 0;
+        }
+
+        .panel-card thead th {
+            background: #f8fafc;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .02em;
+        }
+
+        .empty-row td {
+            text-align: center;
+            color: #9ca3af;
+            padding: 30px 0;
+        }
+
+        .ip-address {
+            font-family: monospace;
+            font-size: 13px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container mt-4">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Login History</h1>
+                <p>Session activity across all users</p>
+            </div>
+
+            <a href="/admin" class="btn btn-outline-secondary rounded-pill">
+                <i class="bi bi-arrow-left"></i>
+                Back to Admin
+            </a>
+
+        </div>
+
+        <div class="card panel-card">
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Login Time</th>
+                                <th>Logout Time</th>
+                                <th>Duration</th>
+                                <th>IP Address</th>
+                                <th>Status</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for row in history %}
+
+                            <tr>
+
+                                <td>{{ row.id }}</td>
+
+                                <td>{{ row.username }}</td>
+
+                                <td>
+                                    {% if row.login_time %}
+                                    {{ row.login_time.strftime('%d-%m-%Y %I:%M:%S %p') }}
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if row.logout_time %}
+                                    {{ row.logout_time.strftime('%d-%m-%Y %I:%M:%S %p') }}
+                                    {% else %}
+                                    <span class="badge bg-warning text-dark">
+                                        Active Session
+                                    </span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if row.login_time and row.logout_time %}
+                                    {% set diff = row.logout_time - row.login_time %}
+                                    {% set total_min = (diff.total_seconds() // 60) | int %}
+                                    {% if total_min < 1 %}
+                                    &lt; 1 min
+                                    {% elif total_min < 60 %}
+                                    {{ total_min }} min
+                                    {% else %}
+                                    {{ (total_min // 60) | int }}h {{ (total_min % 60) | int }}m
+                                    {% endif %}
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="ip-address">{{ row.ip_address }}</td>
+
+                                <td>
+
+                                    {% if row.status=="SUCCESS" %}
+                                    <span class="badge bg-success">
+                                        SUCCESS
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-danger">
+                                        FAILED
+                                    </span>
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                            {% else %}
+
+                            <tr class="empty-row">
+                                <td colspan="7">No login history recorded yet.</td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="mb-5"></div>
+
+    </div>
+
+</body>
+
+</html>

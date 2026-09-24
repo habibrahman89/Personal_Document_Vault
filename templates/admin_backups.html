@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Backup Manager</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            background: #f5f7fb;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .panel-card {
+            background: #fff;
+            border-radius: 18px;
+            border: none;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, .06);
+            margin-bottom: 35px;
+        }
+
+        .panel-card table {
+            margin-bottom: 0;
+        }
+
+        .panel-card thead th {
+            background: #f8fafc;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .02em;
+        }
+
+        .empty-row td {
+            text-align: center;
+            color: #9ca3af;
+            padding: 30px 0;
+        }
+
+        .backup-filename {
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .restore-latest-btn {
+            border-radius: 30px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container mt-4">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Backup Manager</h1>
+                <p>Manage database and document backups</p>
+            </div>
+
+            <a href="/admin" class="btn btn-outline-secondary rounded-pill">
+                <i class="bi bi-arrow-left"></i>
+                Back to Admin
+            </a>
+
+        </div>
+
+        <div class="alert alert-info d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+            <div>
+                <strong>Restoring a specific backup file isn't supported yet.</strong>
+                <br>
+                The current restore process always restores the most recent database and uploads backup together.
+            </div>
+
+            <a href="/restore" class="btn btn-warning restore-latest-btn"
+                onclick="return confirm('WARNING!\n\nThis will overwrite the current database and uploaded documents with the latest backup.\n\nDo you want to continue?')">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Restore Latest Backup
+            </a>
+
+        </div>
+
+        <h4 class="section-title mt-4">
+            Database Backups
+        </h4>
+
+        <div class="card panel-card">
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+
+                            <tr>
+                                <th>Backup File</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for file in database_backups %}
+
+                            <tr>
+
+                                <td class="backup-filename">
+                                    {{ file }}
+                                </td>
+
+                                <td>
+
+                                    <a href="/backup/download/database/{{ file }}" class="btn btn-outline-success btn-sm">
+                                        <i class="bi bi-download"></i>
+                                        Download
+                                    </a>
+
+                                    <a href="/backup/delete/database/{{ file }}" class="btn btn-outline-danger btn-sm"
+                                        onclick="return confirm('Permanently delete this backup file? This cannot be undone.')">
+                                        <i class="bi bi-trash"></i>
+                                        Delete
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            {% else %}
+
+                            <tr class="empty-row">
+                                <td colspan="2">No database backups found.</td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+        <h4 class="section-title">
+            Upload Backups
+        </h4>
+
+        <div class="card panel-card">
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+
+                            <tr>
+                                <th>Backup File</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for file in uploads_backups %}
+
+                            <tr>
+
+                                <td class="backup-filename">
+                                    {{ file }}
+                                </td>
+
+                                <td>
+
+                                    <a href="/backup/download/uploads/{{ file }}" class="btn btn-outline-success btn-sm">
+                                        <i class="bi bi-download"></i>
+                                        Download
+                                    </a>
+
+                                    <a href="/backup/delete/uploads/{{ file }}" class="btn btn-outline-danger btn-sm"
+                                        onclick="return confirm('Permanently delete this backup file? This cannot be undone.')">
+                                        <i class="bi bi-trash"></i>
+                                        Delete
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            {% else %}
+
+                            <tr class="empty-row">
+                                <td colspan="2">No upload backups found.</td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="mb-5"></div>
+
+    </div>
+
+</body>
+
+</html>
