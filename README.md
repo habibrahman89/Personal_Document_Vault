@@ -4,6 +4,9 @@
 
 Arkheion is a personal document-management and digital-vault application for securely organizing, storing, searching, previewing, downloading, and managing important documents.
 
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/91bac5f3-d016-4c78-a824-5c321f45b96a" />
+
+
 > **Important:** This guide is for normal user demonstration. It does not claim that any Internet-connected application is 100% secure.
 
 ---
